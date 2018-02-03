@@ -1,9 +1,5 @@
 import XCTest
 
-func lastTidy(from number: Int) -> Int {
-    return number
-}
-
 extension Int {
     var isTidy: Bool {
         let digits = self.digits
@@ -12,7 +8,7 @@ extension Int {
                 break
             }
             let currentDigit = digits[index]
-            let nextDigit = digits[index+1]
+            let nextDigit = digits[index + 1]
             if currentDigit > nextDigit {
                 return false
             }
@@ -21,8 +17,39 @@ extension Int {
     }
 
     var digits: [Int] {
-        return "\(self)".flatMap { Int(String($0)) }
+        return "\(self)".flatMap {
+            Int(String($0))
+        }
     }
+}
+
+func lastTidy(from number: Int) -> Int {
+    if number.isTidy {
+        return number
+    }
+
+    let digits = number.digits
+    var tidyNumber = [Int]()
+    for (index, _) in digits.enumerated() {
+        let currentDigit = digits[index]
+        if index == (digits.count - 1) {
+            tidyNumber.append(currentDigit)
+            break
+        }
+        let nextDigit = digits[index + 1]
+        if currentDigit > nextDigit {
+            tidyNumber.append(currentDigit - 1)
+            for _ in 1...digits.count - index - 1 {
+                tidyNumber.append(9)
+            }
+            break
+        } else {
+            tidyNumber.append(currentDigit)
+        }
+    }
+    return lastTidy(from: Int(tidyNumber.reduce(into: "") {
+        $0.append("\($1)")
+    })!)
 }
 
 class TestExample: XCTestCase {
@@ -69,6 +96,12 @@ class TestExample: XCTestCase {
 
     func testIsNotTidy() {
         XCTAssertFalse(132.isTidy)
+    }
+
+    func testLastTidy() {
+        XCTAssertEqual(lastTidy(from: 132), 129)
+        XCTAssertEqual(lastTidy(from: 1000), 999)
+        XCTAssertEqual(lastTidy(from: 111111111111111110), 99999999999999999)
     }
 }
 
