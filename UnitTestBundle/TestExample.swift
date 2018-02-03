@@ -61,7 +61,7 @@ class TestExample: XCTestCase {
         sut = SystemUnderTest()
     }
 
-    func IGNORE_testSample() {
+    func testSample() {
         let sample = """
         4
         132
@@ -107,6 +107,14 @@ class TestExample: XCTestCase {
 
 class SystemUnderTest {
     func methodToTest(_ input: String) -> String {
-        return ""
+        let inputs = input.split(separator: "\n").dropFirst()
+        var result = ""
+        for (index, number) in inputs.enumerated() {
+            result.append("Case #\(index+1): \(lastTidy(from: Int(String(number))!))")
+            if index < inputs.count - 1 {
+                result.append("\n")
+            }
+        }
+        return result
     }
 }
